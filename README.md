@@ -1,17 +1,92 @@
 # Very First Steps 
+
 #######
 ## Setup Ubuntu 
+### Support tools for development 
+  - virtual box
+  - vscode ( Remote Explorer plugin to login to VirtualMachine)
 https://docs.covalentx.com/article/120-install-on-ubuntu
 
-## Create a new Project 
+## How is this project created 
+```
 npm i -g @worldsibu/convector-cli
-conv new myproject -c mychaincode
+conv new sample1-agreement -c agreement
+cd sample1-agreement
+ls -ltra 
+```
+
+### It will look like below
+```
+blockchain@hyperledger-fabric:~/sample1-agreement$ ls -ltra 
+total 424
+drwxr-xr-x  20 blockchain blockchain   4096 Nov 29 22:48 ..
+-rw-rw-r--   1 blockchain blockchain    352 Nov 29 22:53 tsconfig.json
+-rw-rw-r--   1 blockchain blockchain    128 Nov 29 22:53 lerna.json
+-rw-rw-r--   1 blockchain blockchain    996 Nov 29 22:53 .gitignore
+-rw-rw-r--   1 blockchain blockchain    328 Nov 29 22:53 .editorconfig
+-rw-rw-r--   1 blockchain blockchain    110 Nov 29 22:53 .convector
+drwxrwxr-x   3 blockchain blockchain   4096 Nov 29 22:53 packages
+-rw-rw-r--   1 blockchain blockchain    202 Nov 29 22:53 agreement.config.json
+-rw-rw-r--   1 blockchain blockchain   1556 Nov 29 23:11 package.json
+drwxrwxr-x   9 blockchain blockchain   4096 Nov 29 23:20 .git
+-rw-rw-r--   1 blockchain blockchain 357716 Nov 29 23:21 package-lock.json
+drwxrwxr-x   5 blockchain blockchain   4096 Nov 29 23:21 .
+-rw-rw-r--   1 blockchain blockchain   4932 Nov 29 23:23 README.md
+```
+
+### 
+
+
+
+
+
+
+## Test this project Block Chain
+- Download this repo
+- cd to folder
+- npm i
+- 'hurl new' or 'npm run env:restart'
+- Search a folder (ignore for a completely new setup) 
+  1. if ~/hyperledger-fabric-network exists
+  2. Perform a `docker prune all` for a docker container/chaincode-image/volume/hurly created network
+  3. 
+
+ 
 
 ## References 
 https://docs.covalentx.com/article/73-code-samples
- 
+https://hackernoon.com/before-you-quit-hyperledger-fabric-start-your-network-without-scripts-under-10-minutes-3xfza30cd
+```
+# Install a tool to bootstrap your project
+npm i -g @worldsibu/convector-cli
+
+# Create a new smart contract code project
+conv new example -c mychaincode
+
+# get to the project to see the source code
+cd example
+
+# Resolve dependencies
+npm i
+
+# Package the project
+npm run cc:package -- example org1
+
+# Start your blockchain network
+hurl new
+
+# Install the smart contract
+hurl install example node -P ./chaincode-example
+
+# Wait a few seconds
+
+# Send the first transaction
+hurl invoke example example_create '{"id":"1", "name": "example", "created": 1000, "modified": 10000}'
+```
 
 ####### 
+
+
 
 # sample1-agreement - agreement
 
