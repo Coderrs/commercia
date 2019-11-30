@@ -17,4 +17,10 @@ export class AgreementController extends ConvectorController<ChaincodeTx> {
   ) {
     await agreement.save();
   }
+  @Invokable()
+  public async getAllAgreements()
+  {
+    const storedAgreements = await Agreement.getAll('io.worldsibu.agreement');
+    return storedAgreements;
+  }
 }

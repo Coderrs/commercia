@@ -163,8 +163,125 @@ drwxrwxr-x   5 blockchain blockchain   4096 Nov 29 23:21 .
     [hurley] - Result: {"type":"Buffer","data":[]}
     Cleaning up event hubs
     ```
- 
-
+  7. Use https://github.com/worldsibu/convector-rest-api for api.json
+  8. npm i -g @worldsibu/conv-rest-api
+  9. create a api.json file # if you do any code change to model and controller . Just re-run step 10
+  10. conv-rest-api generate api -c agreement -f ./agreement.config.json
+  ```
+  blockchain@hyperledger-fabric:~/sample1-agreement$ conv-rest-api generate api -c agreement -f ./agreement.config.json 
+  [conv-rest-api] Removing previously generated app (packages/server)
+  [conv-rest-api] Generating stub folder 
+  [conv-rest-api] Exiting packages folder...
+  /home/blockchain/sample1-agreement
+  [conv-rest-api] Compiling new app...
+  [conv-rest-api] Bootstrapping...
+  [conv-rest-api] Adding chaincode(s)...
+  ```
+  11. npm install -g generator-express-no-stress-typescript
+  12. 
+  ```
+    # Compile everything
+    [npx] lerna bootstrap
+  ```
+  13. Update the import in file /home/blockchain/sample1-agreement/packages/server/src/convector.ts
+    ```
+    import { AgreementController } from '../../agreement-cc'; ## the ../../ was missing 
+    ``` 
+  14. blockchain@hyperledger-fabric:~/sample1-agreement/packages/server$ npx lerna run compile
+  ```
+  blockchain@hyperledger-fabric:~/sample1-agreement$ npx lerna run compile --scope agreement-app
+  lerna notice cli v3.13.4
+  lerna info filter [ 'agreement-app' ]
+  lerna ERR! EFILTER No packages remain after filtering [ 'agreement-app' ]
+  blockchain@hyperledger-fabric:~/sample1-agreement$ npx lerna run compile --scope agreement-cc
+  lerna notice cli v3.13.4
+  lerna info filter [ 'agreement-cc' ]
+  lerna success run No packages found with the lifecycle script 'compile'
+  blockchain@hyperledger-fabric:~/sample1-agreement$ npx lerna run compile --scope server
+  lerna notice cli v3.13.4
+  lerna info filter [ 'server' ]
+  lerna success run No packages found with the lifecycle script 'compile'
+  blockchain@hyperledger-fabric:~/sample1-agreement$ ls 
+  agreement.config.json  chaincode-agreement  node_modules  package-lock.json  pysdk-client  tsconfig.json
+  api.json               lerna.json           package.json  packages           README.md
+  blockchain@hyperledger-fabric:~/sample1-agreement$ npx lerna run compile --scope chaincode-agreement
+  lerna notice cli v3.13.4
+  lerna info filter [ 'chaincode-agreement' ]
+  lerna ERR! EFILTER No packages remain after filtering [ 'chaincode-agreement' ]
+  blockchain@hyperledger-fabric:~/sample1-agreement$ npx lerna run compile --scope package
+  package.json       package-lock.json  packages/          
+  blockchain@hyperledger-fabric:~/sample1-agreement$ npx lerna run compile --scope package/
+  lerna notice cli v3.13.4
+  lerna info filter [ 'package/' ]
+  lerna ERR! EFILTER No packages remain after filtering [ 'package/' ]
+  blockchain@hyperledger-fabric:~/sample1-agreement$ npx lerna run compile --scope ^C
+  blockchain@hyperledger-fabric:~/sample1-agreement$ cd package
+  bash: cd: package: No such file or directory
+  blockchain@hyperledger-fabric:~/sample1-agreement$ cd package^C
+  blockchain@hyperledger-fabric:~/sample1-agreement$ ls 
+  agreement.config.json  chaincode-agreement  node_modules  package-lock.json  pysdk-client  tsconfig.json
+  api.json               lerna.json           package.json  packages           README.md
+  blockchain@hyperledger-fabric:~/sample1-agreement$ cd packages/
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages$ ls
+  agreement-cc  log  server
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages$ npx lerna run compile --scope agreement-cc
+  lerna notice cli v3.13.4
+  lerna info filter [ 'agreement-cc' ]
+  lerna success run No packages found with the lifecycle script 'compile'
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages$ npx lerna run compile --scope agreement
+  lerna notice cli v3.13.4
+  lerna info filter [ 'agreement' ]
+  lerna ERR! EFILTER No packages remain after filtering [ 'agreement' ]
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages$ npx lerna run compile --scope server
+  lerna notice cli v3.13.4
+  lerna info filter [ 'server' ]
+  lerna success run No packages found with the lifecycle script 'compile'
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages$ npx lerna run compile
+  lerna notice cli v3.13.4
+  lerna success run No packages found with the lifecycle script 'compile'
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages$ cd server/
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages/server$ npx lerna run compile
+  npx: installed 698 in 37.275s
+  info cli using local version of lerna
+  lerna notice cli v3.13.4
+  lerna success run No packages found with the lifecycle script 'compile'
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages/server$ npx lerna run compile --scope server
+  npx: installed 698 in 34.524s
+  info cli using local version of lerna
+  lerna notice cli v3.13.4
+  lerna info filter [ 'server' ]
+  lerna success run No packages found with the lifecycle script 'compile'
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages/server$ npx lerna run compile --scope agreement-app --stream
+  npx: installed 698 in 21.068s
+  info cli using local version of lerna
+  lerna notice cli v3.13.4
+  lerna info filter [ 'agreement-app' ]
+  lerna ERR! EFILTER No packages remain after filtering [ 'agreement-app' ]
+  blockchain@hyperledger-fabric:~/sample1-agreement/packages/server$ npx lerna run compile --scope agreement --stream
+  npx: installed 698 in 20.382s
+  info cli using local version of lerna
+  lerna notice cli v3.13.4
+  lerna info filter [ 'agreement' ]
+  lerna ERR! EFILTER No packages remain after filtering [ 'agreement' ]
+  ```
+  15.  
+  ```
+    # Start the server
+    [npx] lerna run start --scope server --stream
+  ```
+  16. re-compile and start the server 
+  ``` 
+     export chaincode="agreement" ; npm run cc:upgrade -- ${chaincode} 1.1.3
+  ```
+  17. Keep changing the chain code and testing the new function(s) using hurl
+  ```
+    blockchain@hyperledger-fabric:~/sample1-agreement$ hurl invoke agreement agreement_getAllAgreements 
+    [hurley] - Sending transaction as user1 in org org1...
+    [hurley] - Transaction sent! VALID  SUCCESS 47ff015c9c3778630d1b00e649be8c7b5f705ada3523e7dedc7676b6e49c79a6
+    [hurley] - Result: [{"_created":1000,"_id":"1","_modified":10000,"_name":"example","_type":"io.worldsibu.agreement"},{"_id":"2","_type":"io.worldsibu.agreement"},{"_id":"3","_type":"io.worldsibu.agreement"},{"_id":"4","_type":"io.worldsibu.agreement"},{"_id":"5","_type":"io.worldsibu.agreement"}]
+    Cleaning up event hubs
+    blockchain@hyperledger-fabric:~/sample1-agreement$ 
+  ```
 ## References 
 https://docs.covalentx.com/article/73-code-samples
 https://hackernoon.com/before-you-quit-hyperledger-fabric-start-your-network-without-scripts-under-10-minutes-3xfza30cd

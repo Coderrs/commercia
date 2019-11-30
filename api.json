@@ -1,0 +1,13 @@
+[
+    {
+        "function": "create",
+        "controller": "AgreementController",
+        "verb": "get"    
+    }
+    ,
+    {
+        "function": "getAllAgreements",
+        "controller": "AgreementController",
+        "verb": "get"    
+    }
+]
