@@ -48,9 +48,121 @@ drwxrwxr-x   5 blockchain blockchain   4096 Nov 29 23:21 .
 - 'hurl new' or 'npm run env:restart'
 - Search a folder (ignore for a completely new setup) 
   1. if ~/hyperledger-fabric-network exists
-  2. Perform a `docker prune all` for a docker container/chaincode-image/volume/hurly created network
-  3. 
+  2. Perform a `docker prune all` for a docker container or chaincode-image or volume by hurl created network
+  
+  ```
+  blockchain@hyperledger-fabric:~/sample1-agreement$ docker stop $(docker ps -a | grep -v CONTAINER | awk '{print $1}')
+    450198cdb73d
+    68bf26b2864a
+    e4ce11986459
+    afa1e98c2aed
+    333312f98fe3
+    ddfae015e18a
+    01a87ce99195
+    b380786d2e51
+    8a9ac38df347
+    a64755b36adf
+    blockchain@hyperledger-fabric:~/sample1-agreement$ docker rm $(docker ps -a | grep -v CONTAINER | awk '{print $1}')
+    450198cdb73d
+    68bf26b2864a
+    e4ce11986459
+    afa1e98c2aed
+    333312f98fe3
+    ddfae015e18a
+    01a87ce99195
+    b380786d2e51
+    8a9ac38df347
+    a64755b36adf
+    blockchain@hyperledger-fabric:~/sample1-agreement$ rm -rf ../
+    .bash_history                         .gnupg/                               sample1-agreement/
+    .bash_logout                          hyperledger-fabric-network/           .ssh/
+    .bashrc                               install_nvm.sh                        supplychain/
+    .cache/                               myfirstproject/                       .viminfo
+    car/                                  .node-gyp/                            .vscode-server/
+    commercia/                            .npm/                                 .wget-hsts
+    .config/                              .npmrc                                .yarn/
+    convector-example-people-attributes/  .nvm/                                 .yarnrc
+    convector-example-supplychain-master/ .pm2/                                 
+    .gitconfig                            .profile                              
+    blockchain@hyperledger-fabric:~/sample1-agreement$ rm -rf ../hyperledger-fabric-network/
+    blockchain@hyperledger-fabric:~/sample1-agreement$ docker ps 
+    CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+    blockchain@hyperledger-fabric:~/sample1-agreement$ docker network prune 
+    WARNING! This will remove all networks not used by at least one container.
+    Are you sure you want to continue? [y/N] y
+    Deleted Networks:
+    net_hurley_dev_net
 
+    blockchain@hyperledger-fabric:~/sample1-agreement$ docker volume prune 
+    WARNING! This will remove all local volumes not used by at least one container.
+    Are you sure you want to continue? [y/N] y
+    Deleted Volumes:
+    net_shared
+    ab14e077022cef993d86d779e77b989a527e1b94026e2914bfe5c3cb3b21666b
+    874d8657a3397654064b3580e1d357c1e70aba92b158934c0cee873718161499
+
+    Total reclaimed space: 267.2kB
+    blockchain@hyperledger-fabric:~/sample1-agreement$ docker image prune 
+    WARNING! This will remove all dangling images.
+    Are you sure you want to continue? [y/N] y
+    Total reclaimed space: 0B
+  ```
+  3. npm run cc:restart
+  4. export chaincode="agreement" ; npm run cc:start -- ${chaincode}
+  5. export chaincode="agreement" ; npm run cc:upgrade -- ${chaincode} 1.1.2
+    ```
+    blockchain@hyperledger-fabric:~/sample1-agreement$ export chaincode="agreement" ; npm run cc:upgrade -- ${chaincode} 1.1.2
+
+    > sample1-agreement@0.1.0 cc:upgrade /home/blockchain/sample1-agreement
+    > f() { npm run cc:package -- $1; hurl upgrade ${3:-$1} node $2  -P ./chaincode-$1; }; f "agreement" "1.1.2"
+
+
+    > sample1-agreement@0.1.0 cc:package /home/blockchain/sample1-agreement
+    > f() { npm run lerna:build; chaincode-manager --update --config ./$1.config.json --output ./chaincode-$1 package; }; f "agreement"
+
+
+    > sample1-agreement@0.1.0 lerna:build /home/blockchain/sample1-agreement
+    > lerna run build
+
+    lerna notice cli v3.13.4
+    lerna info Executing command in 1 package: "npm run build"
+    lerna info run Ran npm script 'build' in 'agreement-cc' in 2.6s:
+
+    > agreement-cc@0.1.0 build /home/blockchain/sample1-agreement/packages/agreement-cc
+    > npm run clean && tsc
+
+
+    > agreement-cc@0.1.0 clean /home/blockchain/sample1-agreement/packages/agreement-cc
+    > rimraf dist client
+
+    lerna success run Ran npm script 'build' in 1 package in 2.6s:
+    lerna success - agreement-cc
+    Installing Chaincode agreement version 1.1.2 at org1
+    2019-11-30 00:02:45.512 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
+    2019-11-30 00:02:45.513 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
+    2019-11-30 00:02:45.541 UTC [chaincodeCmd] install -> INFO 003 Installed remotely response:<status:200 payload:"OK" > 
+    Installed Chaincode agreement version 1.1.2  at org1
+    Installing Chaincode agreement version 1.1.2 at org2
+    2019-11-30 00:02:45.598 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
+    2019-11-30 00:02:45.598 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
+    2019-11-30 00:02:45.616 UTC [chaincodeCmd] install -> INFO 003 Installed remotely response:<status:200 payload:"OK" > 
+    Installed Chaincode agreement version 1.1.2  at org2
+    Upgrading Chaincode agreement version 1.1.2 at org1 for channel ch1
+    It may take a few minutes depending on the chaincode dependencies
+    2019-11-30 00:02:55.683 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 001 Using default escc
+    2019-11-30 00:02:55.684 UTC [chaincodeCmd] checkChaincodeCmdParams -> INFO 002 Using default vscc
+    Upgraded Chaincode at org1
+    blockchain@hyperledger-fabric:
+    ```
+  6. hurl invoke agreement agreement_create '{"id":"1", "name": "example", "created": 1000, "modified": 10000}'
+    ```
+    blockchain@hyperledger-fabric:~/sample1-agreement$ hurl invoke agreement agreement_create '{"id":"1", "name": "example", "created": 1000, "modified": 10000}'
+    [hurley] - {"id":"1", "name": "example", "created": 1000, "modified": 10000}
+    [hurley] - Sending transaction as user1 in org org1...
+    [hurley] - Transaction sent! VALID  SUCCESS 6b05efe7779d51caa0829d15d42229e76962fc0170a6b32c4d28af1399a07eed
+    [hurley] - Result: {"type":"Buffer","data":[]}
+    Cleaning up event hubs
+    ```
  
 
 ## References 
