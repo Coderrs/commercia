@@ -282,9 +282,53 @@ drwxrwxr-x   5 blockchain blockchain   4096 Nov 29 23:21 .
     Cleaning up event hubs
     blockchain@hyperledger-fabric:~/sample1-agreement$ 
   ```
+  18. How to test in org2 user 1 
+  ```
+  blockchain@hyperledger-fabric:~/sample1-agreement$ hurl invoke agreement agreement_getAllAgreements --organization org2 --user user1
+  [hurley] - Sending transaction as user1 in org org2...
+
+  [hurley] - Transaction sent! VALID  SUCCESS b4bd57fe99d2fe4c69bfd4544ed7766554ff5e173251ffc9da10d64f19b52608
+  [hurley] - Result: [{"_created":1000,"_id":"1","_modified":10000,"_name":"example","_type":"io.worldsibu.agreement"},{"_id":"2","_type":"io.worldsibu.agreement"},{"_id":"3","_type":"io.worldsibu.agreement"},{"_id":"4","_type":"io.worldsibu.agreement"},{"_id":"5","_type":"io.worldsibu.agreement"}]
+  Cleaning up event hubs
+  ```
+  19. Observe the Differences are only shown up between the different identities 
+  ```
+    blockchain@hyperledger-fabric:~/sample1-agreement$ hurl invoke agreement agreement_create '{"id":"6", "name": "example", "created": 1001, "modified": 10001}'
+    [hurley] - {"id":"6", "name": "example", "created": 1001, "modified": 10001}
+    [hurley] - Sending transaction as user1 in org org1...
+    [hurley] - Transaction sent! VALID  SUCCESS 5bda0dc6136aa715e82c9d44382fc6b53cc940e7b26443f9b7b49d4709b7927f
+    [hurley] - Result: {"type":"Buffer","data":[]}
+    Cleaning up event hubs
+    blockchain@hyperledger-fabric:~/sample1-agreement$ hurl invoke agreement agreement_getAllAgreements --organization org2 --user user1[hurley] - Sending transaction as user1 in org org2...
+    [hurley] - Transaction sent! VALID  SUCCESS 88368cb7fac4996e91b3a1c066c2e9457b1eea30f3489b7b30feb99bd2d5c451
+    [hurley] - Result: [{"_created":1000,"_id":"1","_modified":10000,"_name":"example","_type":"io.worldsibu.agreement"},{"_id":"2","_type":"io.worldsibu.agreement"},{"_id":"3","_type":"io.worldsibu.agreement"},{"_id":"4","_type":"io.worldsibu.agreement"},{"_id":"5","_type":"io.worldsibu.agreement"},{"_created":1001,"_id":"6","_modified":10001,"_name":"example","_type":"io.worldsibu.agreement"}]
+    Cleaning up event hubs
+  ```
+  20. Ubuntu after server sart found issues with error on fswatches
+  https://github.com/facebook/jest/issues/3254
+  ```
+  blockchain@hyperledger-fabric:~/sample1-agreement$ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+  [sudo] password for blockchain: 
+  fs.inotify.max_user_watches=524288
+  fs.inotify.max_user_watches = 524288
+  blockchain@hyperledger-fabric:~/sample1-agreement$
+  ```
+  21. Started Server and found no more issues with ubuntu 18.04 
+  ```
+  npx lerna run start --scope server --stream
+  ```
+  22. The Sample curl wasy for endpoint api calling 
+  ```
+  blockchain@hyperledger-fabric:~/sample1-agreement$ curl http://localhost:8000/agreement/getAllAgreements -H "Content-Type: application/json" --request GET
+  [{"_created":1000,"_id":"1","_modified":10000,"_name":"example","_type":"io.worldsibu.agreement"},{"_id":"2","_type":"io.worldsibu.agreement"},{"_id":"3","_type":"io.worldsibu.agreement"},{"_id":"4","_type":"io.worldsibu.agreement"},{"_id":"5","_type":"io.worldsibu.agreement"},{"_created":1001,"_id":"6","_modified":10001,"_name":"example","_type":"io.worldsibu.agreement"}]
+  blockchain@hyperledger-fabric:~/sample1-agreement$ 
+  ```
+
 ## References 
 https://docs.covalentx.com/article/73-code-samples
 https://hackernoon.com/before-you-quit-hyperledger-fabric-start-your-network-without-scripts-under-10-minutes-3xfza30cd
+https://github.com/worldsibu/convector-example-fabcar-rest
+
 ```
 # Install a tool to bootstrap your project
 npm i -g @worldsibu/convector-cli
