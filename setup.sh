@@ -47,7 +47,7 @@ cd react-app-agreement/react-ui-agreement && echo "yarn start &" | bash -
 #nvm install 8.11.4
 ## should output v8.11.4
 #node -v
-#
+# nvm alias default 8.11.4
 # start the react app and the hyperledger client
 apt install build-essential
 npm install -g node-gyp
